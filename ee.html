@@ -1,0 +1,2108 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+
+<LINK rel="stylesheet" type"text/css"
+     href="screen.css" media="screen">
+     
+<LINK rel="stylesheet" type"text/css"
+     href="print.css" media="print">
+
+<style type="text/css">
+
+<!--#content {padding:5px 300px 20px 200px;}-->
+<!--p {line-height:1.8em; letter-spacing:0.1em; text-align:justify;}-->
+<!--#fixed {position:absolute; top:25px; left:10px; width:150px; z-index:10; color:#567; border:1px solid #000; padding:10px;}
+
+.texttoread {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+}
+.texttosmall {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+}
+.innertitles {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #92437c;
+	font-style: normal;
+	font-weight: bold;
+}
+.lastline {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	font-style: normal;
+	font-weight: bold;
+}
+.titles {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #878785;
+	font-style: normal;
+	font-weight: bold;
+}
+.cointext {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #878785;
+	font-style: normal;
+	font-weight: normal;
+}
+.actions {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #92437c;
+	font-style: normal;
+	font-weight: normal;
+}
+.errorboxtitle {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #576172;
+	font-style: normal;
+	font-weight: normal;
+}
+.errorboxtext {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #576172;
+	font-style: normal;
+	font-weight: normal;
+}
+.titlesselected {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #878785;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: underline;
+}
+.amount {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: normal;
+	font-weight: bold;
+	color: #000000;
+}
+.selected {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: bold;
+	color: #000000;
+	text-decoration: none;
+}
+.hoverunder {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: underline;
+}
+#bottomInfo {
+	filter: alpha(opacity=100);
+}
+.optionNoSel {
+	background-color: #edf5fb;
+	cursor:hand;
+}
+.optionYesSel {
+	background-color: #c5e3ff;
+	cursor:hand;
+}
+-->
+</style>
+<script language="JavaScript" src="codes/slider.js"></script>
+<script language="JavaScript" src="codes/date.js"></script>
+<script src="codes/AC_RunActiveContent.js" language="javascript"></script>
+<script type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+//-->
+
+var xplorer, cmpObj; 
+var CompanyTAGS;
+var LogDATE;
+var CompanyDATA;
+var selectedTopTitleObj = document.getElementById('sunopBut');
+var slideProg = false;
+var logd;
+
+
+function start()
+{  
+
+
+  xplorer = external;
+  cmpObj=xplorer.CreateObj("COMPANYVIEW");
+  CompanyTAGS=cmpObj.COMPANY;  
+  LogDATE=cmpObj.LOGINDATE;
+  
+/*---------------------------------*/  
+  logd = new Date(LogDATE); 
+/*---------------------------------*/  
+
+  var strHtml="";
+  CompanyTAGS.FIRST;
+  while (!CompanyTAGS.EOF)
+  {
+  strHtml += fillChecks(CompanyTAGS.COMPANY, CompanyTAGS.NAME, CompanyTAGS.AFM);
+  CompanyTAGS.NEXT;
+  }
+
+  	strHtml = dynamicStatic() + strHtml + '</div>';
+	document.getElementById('dd_2_choise').innerHTML = strHtml;
+	document.getElementById('dd_2_choise').firstChild.nextSibling.firstChild.firstChild.firstChild.firstChild.firstChild.click();
+	updCheckFld();
+  
+  errordiv.innerText = "";
+  loader(true);
+  GetData(); 
+  chooseIcon();
+  fillDate();
+ // loader(false);
+
+}
+
+function GetData()
+{
+
+  try
+  {
+    cmpObj.BATCHEXECUTE;
+	CompanyDATA=cmpObj.FindTable("FCompanyView");
+    //var strFileName=CompanyDATA.GETGRAPH("TOTAADVAL","TOTAADVAL"); //pie"," strFileName=CompanyDATA.GETGRAPH("pie", CompanyDATA.MKVAL);
+    
+    var DATA = cmpObj.GETSQLDATASET("SELECT A.DISTRICT AS AREA, Sum(ISNULL(B.LBAL,0)) AS BALANCE FROM TRDR A LEFT OUTER JOIN TRDFINDATA B ON A.TRDR=B.TRDR WHERE A.COMPANY=1 AND A.SODTYPE=13 and B.LBAL>3100 GROUP BY A.DISTRICT", null);
+    var strFileName=DATA.GETGRAPH("AREA","BALANCE");    
+//  debug.innerText = strFileName;	
+    panel3text.innerHTML = "<img src=file:\\\\"+strFileName+" border=0 width=400 height=250 alt='Η Εικόνα των οικ/κών στοιχείων' title=''>"
+	
+	panel1Data()
+	panel2Data()
+//	panel3Data()
+	panel4Data()
+	printDivData()
+  }
+  catch(e)
+  {
+    errordiv.innerText = "Error : "+e.message;
+  }
+  finally
+  {
+  }
+  loader(false);
+}
+
+function panel1Data()
+{
+	esoda.innerText = frm(CompanyDATA.TOTAADVAL);
+	eksoda.innerText = frm(CompanyDATA.TOTALDVAL);
+	apaithseis.innerText = frm(CompanyDATA.CALCINVAL);
+	upoxreoseis.innerText = frm(CompanyDATA.CALCOUTVAL);
+	loipa.innerText = frm(CompanyDATA.ITEMFVAL);
+}
+
+function panel2Data()
+{
+	panel2amount.innerHTML = '<b>'+ frm(CompanyDATA.VIEWVAL) +'</b>'
+}
+
+function panel2DataAct2()
+{
+	document.getElementById('panel2text').innerHTML='<table width="100%" class="texttoread"><tr><td colspan="2" align="center"><b>Αποτέλεσμα Εταιρείας</b><br><br></td></tr><tr><td colspan="2" align="center" valign="center"><div id="mainicon">'+(frm(CompanyDATA.VIEWVAL)>0?'<img id="mainiconimg" src="images/totalup.jpg">':'<img id="mainiconimg" src="images/totaldown.jpg">')+'<br><br></div></td></tr><tr><td align="left">Απαιτήσεις - Υποχρεώσεις</td><td align="right"><div id="panel2amount" class="texttoread"><b>'+ frm(CompanyDATA.VIEWVAL) +'</b></div></td></tr></table>';
+	document.getElementById('but1').className = "texttoread";
+	document.getElementById('but2').className = "texttoread";
+	document.getElementById('but3').className = "texttoread";
+	document.getElementById('but4').className = "texttoread";
+	document.getElementById('but5').className = "texttoread";
+	
+	aStr2 = new String(document.getElementById('img_panel2').src);
+	if (aStr2.indexOf('images/down_arrow.jpg')>-1)
+	{
+		Slide('panel2').doASlide();
+	}	
+}
+
+function showClosedPanel2()
+{
+	aStr2 = new String(document.getElementById('img_panel2').src);
+	if (aStr2.indexOf('images/down_arrow.jpg')>-1)
+	{
+		Slide('panel2').doASlide();
+	}	
+}
+
+function frm(value)
+{
+	return value;
+}
+
+/*function panel3Data()
+{
+	
+}*/
+
+function selectedLink(selObj)
+{
+var objId = selObj.id;
+	switch (objId) 
+	{
+		case "but1": selObj.className="selected"; document.getElementById('panel2text').innerHTML='<table width="100%" class="texttoread"><tr><td>Σύνολο Εσόδων</td><td align="right"><b>'+ frm(CompanyDATA.TOTAADVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Μεικτό κέρδος</td><td align="right"><b>'+ frm(CompanyDATA.MKVAL) +'</b></td></tr><tr><td>- Πωλήσεις</td><td align="right"><b>'+ frm(CompanyDATA.SALVAL) +'</b></td></tr><tr><td>- Κόστος πωληθέντων</td><td align="right"><b>'+ frm(CompanyDATA.SALCOST) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Παροχή υπηρεσιών</td><td align="right"><b>'+ frm(CompanyDATA.SALSRV) +'</b></td></tr><tr><td>Λοιπά έσοδα</td><td align="right"><b>'+ frm(CompanyDATA.INVAL) +'</b></td></tr><tr><td>Κέρδη από πώληση παγιών</td><td align="right"><b>'+ frm(CompanyDATA.ADEPRVAL) +'</b></td></tr></table>'; restoreNon(selObj); break;
+		case "but2": selObj.className="selected"; document.getElementById('panel2text').innerHTML='<table width="100%" class="texttoread"><tr><td>Σύνολο Εξόδων/Δαπανών</td><td align="right"><b>'+ frm(CompanyDATA.TOTALDVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Αγορές</td><td align="right"><b>'+ frm(CompanyDATA.PURVAL) +'</b></td></tr><tr><td>Λήψη υπηρεσιών</td><td align="right"><b>'+ frm(CompanyDATA.PURSRV) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Δαπάνες πλην μισθοδοσίας</td><td align="right"><b>'+ frm(CompanyDATA.OUTVAL) +'</b></td></tr><tr><td>Δαπάνες μισθοδοσίας</td><td align="right"><b>'+ frm(CompanyDATA.EMPVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Αποσβέσεις παγίων</td><td align="right"><b>'+ frm(CompanyDATA.DEPRVAL) +'</b></td></tr><tr><td>Ζημιές από πώληση παγιών</td><td align="right"><b>'+ frm(CompanyDATA.DDEPRVAL) +'</b></td></tr></table>'; restoreNon(selObj); break;
+		case "but3": selObj.className="selected"; document.getElementById('panel2text').innerHTML='<table width="100%" class="texttoread"><tr><td>Σύνολο Απαιτήσεων</td><td align="right"><b>'+ frm(CompanyDATA.CALCINVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Υπόλοιπα πελατών</td><td align="right"><b>'+ frm(CompanyDATA.CUSTREM) +'</b></td></tr><tr><td>Υπόλοιπα χρεωστών</td><td align="right"><b>'+ frm(CompanyDATA.DEBITREM) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td><b>Διαθέσιμα</b></td><td align="right"></td></tr><tr><td>- Ταμείο</td><td align="right"><b>'+ frm(CompanyDATA.CASHVAL) +'</b></td></tr><tr><td>- Πιστωτικές κάρτες</td><td align="right"><b>'+ frm(CompanyDATA.CRDVAL) +'</b></td></tr><tr><td>- Λογ/σμοί καταθέσεων <br>&nbsp;&nbsp;προθεσμίας</td><td align="right"><b>'+ frm(CompanyDATA.BNK02) +'</b></td></tr><tr><td>- Αξιόγραφα εισπρακτέα</td><td align="right"><b>'+ frm(CompanyDATA.CHECKIN) +'</b></td></tr><tr><td>- Λογ/σμοί εγγυήσεων <br>&nbsp;&nbsp;επιταγών</td><td align="right"><b>'+ frm(CompanyDATA.BNK05) +'</b></td></tr><tr><td>- Λογαριασμοί όψεως</td><td align="right"><b>'+ frm(CompanyDATA.BNK01) +'</b></td></tr></table>'; restoreNon(selObj); break;
+		case "but4": selObj.className="selected"; document.getElementById('panel2text').innerHTML='<table width="100%" class="texttoread"><tr><td>Σύνολο Υποχρεώσεων</td><td align="right"><b>'+ frm(CompanyDATA.CALCOUTVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Υπόλοιπα προμηθευτών</td><td align="right"><b>'+ frm(CompanyDATA.SUPREM) +'</b></td></tr><tr><td>Υπόλοιπα πιστωτών</td><td align="right"><b>'+ frm(CompanyDATA.CREDITREM) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Αξιόγραφα πληρωτέα</td><td align="right"><b>'+ frm(CompanyDATA.CHECKOUT) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Λογ/σμοί μεσοπρόθεσμων <br>δανείων</td><td align="right"><b>'+ frm(CompanyDATA.BNK03) +'</b></td></tr><tr><td>Λογ/σμοί μακροπρόθεσμων <br>δανείων</td><td align="right"><b>'+ frm(CompanyDATA.BNK04) +'</b></td></tr></table>'; restoreNon(selObj); break;
+		case "but5": selObj.className="selected"; document.getElementById('panel2text').innerHTML='<table width="100%" class="texttoread"><tr><td>Αρχικό απόθεμα</td><td align="right"><b>'+ frm(CompanyDATA.ITEMFVAL) +'</b></td></tr><tr><td>Κόστος υπολοίπου</td><td align="right"><b>'+ frm(CompanyDATA.ITEMRVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td>Κοστ/μένες εισαγωγές</td><td align="right"><b>'+ frm(CompanyDATA.PURCSTVAL) +'</b></td></tr><tr><td>Κοστ/μένες εξαγωγές</td><td align="right"><b>'+ frm(CompanyDATA.SALCSTVAL) +'</b></td></tr><tr><td>Αγορές προς κοστολόγηση</td><td align="right"><b>'+ frm(CompanyDATA.PURCASTVAL) +'</b></td></tr><tr><td>Πωλήσεις προς κοστολόγηση</td><td align="right"><b>'+ frm(CompanyDATA.SALCASTVAL) +'</b></td></tr><tr><td colspan="2"><hr></td></tr><tr><td><b>Παραγωγή</b></td><td align="right"></td></tr><tr><td>- Κόστος Α`/βοηθητ. υλών</td><td align="right"><b>'+ frm(CompanyDATA.CONVAL) +'</b></td></tr><tr><td>- Κόστος εργατικών <br>&nbsp;&nbsp;παραγωγής</td><td align="right"><b>'+ frm(CompanyDATA.LABORVAL) +'</b></td></tr><tr><td>- Κόστος βιομηχανικών <br>&nbsp;&nbsp;εξόδων</td><td align="right"><b>'+ frm(CompanyDATA.OVERVAL) +'</b></td></tr></table>'; restoreNon(selObj); break;
+	}
+	function restoreNon(selectedBut)
+	{
+	var prnObj = selectedBut.parentElement.parentElement; //<tr>
+	var tempChld = prnObj.firstChild; //<td>
+		while (tempChld) 
+		{
+		var spanObj = tempChld.firstChild;
+			if ((spanObj != selectedBut) && (spanObj.tagName=="SPAN"))
+			{
+				spanObj.className = "texttoread";
+			}
+			tempChld = tempChld.nextSibling;
+		}	
+	}	
+}
+
+function chooseIcon()
+{
+	if (frm(CompanyDATA.VIEWVAL) > 0)
+	{
+		document.getElementById('mainicon').innerHTML = '<img src="images/totalup.jpg"><br><br>'
+	}
+	else
+	{
+		document.getElementById('mainicon').innerHTML = '<img src="images/totaldown.jpg"><br><br>'
+	}
+	if (frm(CompanyDATA.TOTAADVAL) > 0)
+	{
+		document.getElementById('topicon1').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but1\').click()" src="images/esodaup.jpg">'
+	}
+	else
+	{
+		document.getElementById('topicon1').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but1\').click()" src="images/esodadown.jpg">'
+	}
+	if (frm(CompanyDATA.TOTALDVAL) > 0)
+	{
+		document.getElementById('topicon2').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but2\').click()" src="images/eksodaup.jpg">'
+	}
+	else
+	{
+		document.getElementById('topicon2').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but2\').click()" src="images/eksodadown.jpg">'
+	}
+	if (frm(CompanyDATA.CALCINVAL) > 0)
+	{
+		document.getElementById('topicon3').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but3\').click()" src="images/apaithseisup.jpg">'
+	}
+	else
+	{
+		document.getElementById('topicon3').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but3\').click()" src="images/apaithseisdown.jpg">'
+	}
+	if (frm(CompanyDATA.CALCOUTVAL) > 0)
+	{
+		document.getElementById('topicon4').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but4\').click()" src="images/upoxreoseisup.jpg">'
+	}
+	else
+	{
+		document.getElementById('topicon4').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but4\').click()" src="images/upoxreoseisdown.jpg">'
+	}
+	if (frm(CompanyDATA.ITEMFVAL) > 0)
+	{
+		document.getElementById('topicon5').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but5\').click()" src="images/loipaup.jpg">'
+	}
+	else
+	{
+		document.getElementById('topicon5').innerHTML = '<img style="cursor:hand" onClick="document.getElementById(\'but5\').click()" src="images/loipadown.jpg">'
+	}
+}
+
+if (AC_FL_RunContent == 0) {
+		alert("This page requires AC_RunActiveContent.js.");
+	} else {
+		AC_FL_RunContent(
+			'codebase', 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0',
+			'width', '100%',
+			'height', '100%',
+			'src', 'images/loader',
+			'quality', 'high',
+			'pluginspage', 'http://www.macromedia.com/go/getflashplayer',
+			'align', 'middle',
+			'play', 'true',
+			'loop', 'true',
+			'scale', 'showall',
+			'wmode', 'window',
+			'devicefont', 'false',
+			'id', 'images/loader',
+			'bgcolor', '#ffffff',
+			'name', 'images/loader',
+			'menu', 'false',
+			'allowFullScreen', 'false',
+			'allowScriptAccess','sameDomain',
+			'movie', 'images/loader',
+			'salign', ''
+			); //end AC code
+	}
+	
+function loader(onOff)
+{
+	document.getElementById('loader').style.visibility = (onOff==true?'visible':'hidden')
+}
+
+function afterShowAnal(obj)
+{
+	document.getElementById('bottomInfo').style.display = "none";
+	var str = "document.getElementById('panel4').style.display = 'block'; document.getElementById('panel4').style.height = 1; var tmr1 = setInterval(function(){extraSlide('panel4',8,500,tmr1,true)},20);"	
+	var tmr = setInterval(function(){extraSlide('panel1',8,1,tmr,false,str)},20);
+	document.getElementById('img_panel1').style.display = 'none';	
+}
+
+function showAnal(obj)
+{
+	if (selectedTopTitleObj != obj)
+	{
+	selectedTopTitleObj = obj;
+	obj.className='titles';
+	document.getElementById('sunopBut').className='titlesselected';
+	var timerOpc = setInterval(function(){extraOpacity('bottomInfo',5,0,timerOpc,false,"afterShowAnal('+ obj +')")}, 15);
+
+	}
+}
+
+function showSunop(obj)
+{
+	if (selectedTopTitleObj !=obj)
+	{
+		selectedTopTitleObj = obj;
+		obj.className='titles';
+		document.getElementById('analBut').className='titlesselected';
+		var str = "var tmr1 = setInterval(function(){extraSlide('panel1',8,155,tmr1,true,'showBotInfo()')},20);" 	
+		var tmr = setInterval(function(){extraSlide('panel4',8,1,tmr,false,str)},20);
+		document.getElementById('img_panel1').style.display = 'block';
+	}
+}
+
+function showBotInfo()
+{
+	document.getElementById("bottomInfo").style.display = "block"; 
+	document.getElementById("panel4").style.display = "none";
+	var timerOpc2 = setInterval(function(){extraOpacity('bottomInfo',5,100,timerOpc2,true,"")}, 15);
+}
+
+
+function extraSlide(objName,step,finalHeight,intervalId,expColl,func)
+{
+	var curHeight = parseInt(document.getElementById(objName).style.height);	
+	var newHeight = (expColl?curHeight + step:curHeight - step);
+	
+	if (expColl?newHeight<finalHeight:newHeight>finalHeight)
+	{
+		slideProg = true;
+		document.getElementById(objName).style.height = (expColl?curHeight + step:curHeight - step);
+	}
+	else
+	{
+		slideProg = false;
+		document.getElementById(objName).style.height = finalHeight;
+		clearInterval (intervalId);
+		eval (func)
+	}
+
+}
+
+function extraOpacity(objName,step,finalOpc,intervalId,fadeIn,func)
+{
+ 	var curOpc = parseInt(document.getElementById(objName).filters.alpha.opacity);
+	var newOpc = (fadeIn?curOpc + step:curOpc - step);
+	
+	if (fadeIn?newOpc<finalOpc:newOpc>finalOpc)
+	{
+		slideProg = true;
+		document.getElementById(objName).filters.alpha.opacity = (fadeIn?curOpc + step:curOpc - step);
+	}
+	else
+	{
+		slideProg = false;
+		document.getElementById(objName).filters.alpha.opacity = finalOpc;
+		clearInterval (intervalId);
+		eval (func)
+	}
+
+}
+
+function panel4Data()
+{
+	document.getElementById('innerTable1_1_1').innerHTML = frm(CompanyDATA.MKVAL); document.getElementById('innerTable1_1_2').innerHTML = frm(CompanyDATA.SALVAL); document.getElementById('innerTable1_1_3').innerHTML = frm(CompanyDATA.SALCOST); document.getElementById('innerTable1_2_1').innerHTML = frm(CompanyDATA.SALSRV); document.getElementById('innerTable1_2_2').innerHTML = frm(CompanyDATA.INVAL); document.getElementById('innerTable1_2_3').innerHTML = frm(CompanyDATA.ADEPRVAL); document.getElementById('innerTable1_3_3').innerHTML = '<b>'+frm(CompanyDATA.TOTAADVAL)+'</b>';
+	document.getElementById('innerTable2_1_1').innerHTML = frm(CompanyDATA.PURVAL); document.getElementById('innerTable2_1_2').innerHTML = frm(CompanyDATA.PURSRV); document.getElementById('innerTable2_2_1').innerHTML = frm(CompanyDATA.OUTVAL); document.getElementById('innerTable2_2_2').innerHTML = frm(CompanyDATA.EMPVAL); document.getElementById('innerTable2_2_3').innerHTML = frm(CompanyDATA.DEPRVAL); document.getElementById('innerTable2_2_4').innerHTML = frm(CompanyDATA.DDEPRVAL); document.getElementById('innerTable2_3_3').innerHTML = '<b>'+frm(CompanyDATA.TOTALDVAL)+'</b>';
+	document.getElementById('innerTable3_1_1').innerHTML = frm(CompanyDATA.CUSTREM); document.getElementById('innerTable3_1_2').innerHTML = frm(CompanyDATA.DEBITREM); document.getElementById('innerTable3_1_3').innerHTML = frm(CompanyDATA.CASHVAL); document.getElementById('innerTable3_2_1').innerHTML = frm(CompanyDATA.CRDVAL); document.getElementById('innerTable3_2_2').innerHTML = frm(CompanyDATA.BNK02); document.getElementById('innerTable3_2_3').innerHTML = frm(CompanyDATA.CHECKIN); document.getElementById('innerTable3_2_4').innerHTML = frm(CompanyDATA.BNK05); document.getElementById('innerTable3_2_5').innerHTML = frm(CompanyDATA.BNK01); document.getElementById('innerTable3_3_3').innerHTML = '<b>'+frm(CompanyDATA.CALCINVAL)+'</b>';
+	document.getElementById('innerTable4_1_1').innerHTML = frm(CompanyDATA.SUPREM); document.getElementById('innerTable4_1_2').innerHTML = frm(CompanyDATA.CREDITREM); document.getElementById('innerTable4_2_1').innerHTML = frm(CompanyDATA.CHECKOUT); document.getElementById('innerTable4_2_2').innerHTML = frm(CompanyDATA.BNK03); document.getElementById('innerTable4_2_3').innerHTML = frm(CompanyDATA.BNK04); document.getElementById('innerTable4_3_3').innerHTML = '<b>'+frm(CompanyDATA.CALCOUTVAL)+'</b>';
+	document.getElementById('innerTable5_1_1').innerHTML = frm(CompanyDATA.ITEMFVAL); document.getElementById('innerTable5_1_2').innerHTML = frm(CompanyDATA.ITEMRVAL); document.getElementById('innerTable5_2_1').innerHTML = frm(CompanyDATA.PURCSTVAL); document.getElementById('innerTable5_2_2').innerHTML = frm(CompanyDATA.SALCSTVAL); document.getElementById('innerTable5_2_3').innerHTML = frm(CompanyDATA.PURCASTVAL); document.getElementById('innerTable5_2_4').innerHTML = frm(CompanyDATA.SALCASTVAL); document.getElementById('innerTable5_3_1').innerHTML = frm(CompanyDATA.CONVAL); document.getElementById('innerTable5_3_2').innerHTML = frm(CompanyDATA.LABORVAL); document.getElementById('innerTable5_3_3').innerHTML = frm(CompanyDATA.OVERVAL);
+	document.getElementById('lastAmount').innerHTML = frm(CompanyDATA.VIEWVAL);
+}
+
+function printDivData()
+{
+	document.getElementById('printInnerTable1_1_1').innerHTML = frm(CompanyDATA.MKVAL); document.getElementById('printInnerTable1_1_2').innerHTML = frm(CompanyDATA.SALVAL); document.getElementById('printInnerTable1_1_3').innerHTML = frm(CompanyDATA.SALCOST); document.getElementById('printInnerTable1_2_1').innerHTML = frm(CompanyDATA.SALSRV); document.getElementById('printInnerTable1_2_2').innerHTML = frm(CompanyDATA.INVAL); document.getElementById('printInnerTable1_2_3').innerHTML = frm(CompanyDATA.ADEPRVAL); document.getElementById('printInnerTable1_3_3').innerHTML = '<b>'+frm(CompanyDATA.TOTAADVAL)+'</b>';
+	document.getElementById('printInnerTable2_1_1').innerHTML = frm(CompanyDATA.PURVAL); document.getElementById('printInnerTable2_1_2').innerHTML = frm(CompanyDATA.PURSRV); document.getElementById('printInnerTable2_2_1').innerHTML = frm(CompanyDATA.OUTVAL); document.getElementById('printInnerTable2_2_2').innerHTML = frm(CompanyDATA.EMPVAL); document.getElementById('printInnerTable2_2_3').innerHTML = frm(CompanyDATA.DEPRVAL); document.getElementById('printInnerTable2_2_4').innerHTML = frm(CompanyDATA.DDEPRVAL); document.getElementById('printInnerTable2_3_3').innerHTML = '<b>'+frm(CompanyDATA.TOTALDVAL)+'</b>';
+	document.getElementById('printInnerTable3_1_1').innerHTML = frm(CompanyDATA.CUSTREM); document.getElementById('printInnerTable3_1_2').innerHTML = frm(CompanyDATA.DEBITREM); document.getElementById('printInnerTable3_1_3').innerHTML = frm(CompanyDATA.CASHVAL); document.getElementById('printInnerTable3_2_1').innerHTML = frm(CompanyDATA.CRDVAL); document.getElementById('printInnerTable3_2_2').innerHTML = frm(CompanyDATA.BNK02); document.getElementById('printInnerTable3_2_3').innerHTML = frm(CompanyDATA.CHECKIN); document.getElementById('printInnerTable3_2_4').innerHTML = frm(CompanyDATA.BNK05); document.getElementById('printInnerTable3_2_5').innerHTML = frm(CompanyDATA.BNK01); document.getElementById('printInnerTable3_3_3').innerHTML = '<b>'+frm(CompanyDATA.CALCINVAL)+'</b>';
+	document.getElementById('printInnerTable4_1_1').innerHTML = frm(CompanyDATA.SUPREM); document.getElementById('printInnerTable4_1_2').innerHTML = frm(CompanyDATA.CREDITREM); document.getElementById('printInnerTable4_2_1').innerHTML = frm(CompanyDATA.CHECKOUT); document.getElementById('printInnerTable4_2_2').innerHTML = frm(CompanyDATA.BNK03); document.getElementById('printInnerTable4_2_3').innerHTML = frm(CompanyDATA.BNK04); document.getElementById('printInnerTable4_3_3').innerHTML = '<b>'+frm(CompanyDATA.CALCOUTVAL)+'</b>';
+	document.getElementById('printInnerTable5_1_1').innerHTML = frm(CompanyDATA.ITEMFVAL); document.getElementById('printInnerTable5_1_2').innerHTML = frm(CompanyDATA.ITEMRVAL); document.getElementById('printInnerTable5_2_1').innerHTML = frm(CompanyDATA.PURCSTVAL); document.getElementById('printInnerTable5_2_2').innerHTML = frm(CompanyDATA.SALCSTVAL); document.getElementById('printInnerTable5_2_3').innerHTML = frm(CompanyDATA.PURCASTVAL); document.getElementById('printInnerTable5_2_4').innerHTML = frm(CompanyDATA.SALCASTVAL); document.getElementById('printInnerTable5_3_1').innerHTML = frm(CompanyDATA.CONVAL); document.getElementById('printInnerTable5_3_2').innerHTML = frm(CompanyDATA.LABORVAL); document.getElementById('printInnerTable5_3_3').innerHTML = frm(CompanyDATA.OVERVAL);
+	document.getElementById('printLastAmount').innerHTML = frm(CompanyDATA.VIEWVAL);
+}
+
+
+
+function showHideQs(selectionObj)
+{
+	var selectionChoise;
+	if (selectionObj)
+	{	
+		selectionChoise = document.getElementById(selectionObj.id+'_choise')
+	}
+		for (var i=1, j=3; i<=j; i++)
+		{	
+			var tempObj = document.getElementById('dd_'+i+'_choise');
+			if (tempObj.style.display == 'block')
+			{				
+				tempObj.style.display = 'none';
+				if (tempObj==selectionChoise)
+				{
+					return;
+				}
+			break;
+			}
+		}
+		
+	if (!selectionObj)
+	{
+		return;
+	}
+	var idChoise = selectionObj.id + "_choise";
+	var choiseObj = document.getElementById(idChoise);
+	var qCurStatus = choiseObj.style.display;
+	var newLeft=getPos(selectionObj)[0];
+	var newTop=getPos(selectionObj)[1];
+	selectionChoise.style.left = newLeft;
+	selectionChoise.style.top = newTop + parseInt(selectionObj.style.height);
+	choiseObj.style.display = (qCurStatus=='none'?'block':'none');
+	showHideAs();
+}
+
+function optionHighlight(optionObj,caseSel)
+{
+	optionObj.className = (caseSel?'optionYesSel':'optionNoSel')
+}
+
+function optionSelect(selectedObj,qFieldNum)
+{	
+	var qFieldUpd = document.getElementById('dd_'+qFieldNum);
+	qFieldUpd.innerText = selectedObj.firstChild.innerText;
+}
+
+function optionSelectDate(selectedObj,qFieldNum)
+{	
+	var qFieldUpd = document.getElementById('dd_1');
+	var nameAndDate = "";
+	
+	if (selectedObj.firstChild)
+	{
+		nameAndDate = selectedObj.firstChild.innerText;
+	}
+	switch (qFieldNum)
+	{
+		case 0: var fDate1=document.getElementById('date1').value; var fDate2=document.getElementById('date2').value;
+		nameAndDate = (fDate1!="" && fDate2!=""?fDate1+ " - " + fDate2:""); 
+		document.getElementById('date1').value=""; document.getElementById('date2').value=""; 
+		document.getElementById('imgDateVal').src = "images/checktypedateDis.jpg"; document.getElementById('imgDateVal').disabled = true; break;
+		case 1:	nameAndDate += " (" + logd.toString("dd/MM/yyyy") + ")"; break;
+		case 2: var tempDate = new Date(LogDATE); nameAndDate += " (" + tempDate.addDays(-1).toString("dd/MM/yyyy") + ")"; break;
+		case 3: var tempDate = new Date(LogDATE); nameAndDate += " (" + tempDate.addWeeks(-1).monday().toString("dd/MM/yyyy") + " - " + tempDate.sunday().toString("dd/MM/yyyy") + ")"; break;
+		case 4: var tempDate = new Date(LogDATE); nameAndDate += " (" + tempDate.addWeeks(-2).monday().toString("dd/MM/yyyy") + " - " + tempDate.sunday().toString("dd/MM/yyyy") + ")"; break;
+		case 5: var tempDate = new Date(LogDATE); nameAndDate += " (" + tempDate.moveToFirstDayOfMonth().toString("dd/MM/yyyy") + " - " + tempDate.addMonths(1).moveToFirstDayOfMonth().addDays(-1).toString("dd/MM/yyyy") + ")"; break;
+		case 6: var tempDate = new Date(LogDATE); nameAndDate += " (" + tempDate.moveToFirstDayOfMonth().addMonths(-1).toString("dd/MM/yyyy") + " - " + tempDate.addMonths(1).moveToFirstDayOfMonth().addDays(-1).toString("dd/MM/yyyy") + ")"; break;
+		case 7: nameAndDate += " (01/01/" + logd.toString("yyyy") + " - 31/12/" + 
+		logd.toString("yyyy") + ")"; break;
+		case 8: var tempDate = new Date(LogDATE); nameAndDate += " (01/01/" + tempDate.toString("yyyy") + " - " + tempDate.moveToFirstDayOfMonth().addDays(-1).toString("dd/MM/yyyy") + ")"; break;
+		case 9: var tempDate = new Date(LogDATE); nameAndDate += " (01/01/" + tempDate.addYears(-1).toString("yyyy") + " - 31/12/" + tempDate.toString("yyyy") + ")"; break;
+	}
+	qFieldUpd.innerText = nameAndDate;
+	document.getElementById('dd_1').title = nameAndDate;
+}
+
+
+function checkChoise(checkObj)
+{
+	event.cancelBubble=true;
+	var arrChk = document.getElementsByName('checklist');
+	var foundChecked = false;
+	foundChecked = checkTheChecks(arrChk);
+	document.getElementById('checkApplyBut').src=(foundChecked?"images/sellectapply.jpg":"images/sellectapplyDis.jpg");
+	document.getElementById('checkApplyBut').disabled=(foundChecked?false:true);
+}
+
+function checkTheChecks(arrInput)
+{
+	var ifChecked = false;
+	for (var i=0, j=arrInput.length; i<j; i++)
+	{
+		if (arrInput[i].checked)
+		{
+			ifChecked = true;
+			break;
+		}
+	}
+	return ifChecked;
+}
+
+function checkAll(onOff)
+{
+	var arrChk = document.getElementsByName('checklist');
+	for (var i=0, j=arrChk.length; i<j; i++)
+	{
+		arrChk[i].checked = onOff;
+	}
+	var foundChecked = false;
+	foundChecked = checkTheChecks(arrChk);
+	document.getElementById('checkApplyBut').src=(foundChecked?"images/sellectapply.jpg":"images/sellectapplyDis.jpg");
+	document.getElementById('checkApplyBut').disabled=(foundChecked?false:true);
+}
+
+function updCheckFld()
+{
+	var arrChk = document.getElementsByName('checklist');
+	var fullStr = "";
+	var allChecked = "";
+	for (var i=0, j=arrChk.length; i<j; i++)
+	{
+		if (arrChk[i].checked)
+		{
+			allChecked += arrChk[i].companyTitle + '\n';
+			fullStr += arrChk[i].companyID + ',';
+		}
+	}
+	if (fullStr.charAt(fullStr.length-1)==",")
+	{
+		fullStr = fullStr.substring(0,fullStr.length-1);
+	}
+	document.getElementById('etairiaValue').innerText = fullStr;
+	document.getElementById('dd_2').title = allChecked.substring(0, allChecked.length-1);
+	showHideQs();
+}
+
+function dynamicStatic()
+{
+	var staticRow = '<table width="228" border="0" cellpadding="0" cellspacing="0" class="texttosmall" bgcolor="#edf5fb"><tr bgcolor="#d5ebff"><td colspan="2" height="25" align="right" style="border-bottom-color:#6d90b0; border-bottom-style:solid; border-bottom-width:1px; padding-right:5px"><table width="50" border="0" cellpadding="0" cellspacing="5"><tr onClick="event.cancelBubble=true;"><td><img style="cursor:hand" onClick="checkAll(true);" src="images/sellectall.jpg" alt="Επιλογή όλων"></td><td><img style="cursor:hand" onClick="checkAll(false);" src="images/sellectnone.jpg" alt="Ακύρωση επιλογών"></td><td><img id="checkApplyBut" style="cursor:hand" onClick="updCheckFld();" src="images/sellectapply.jpg" alt="Επικύρωση/Κλείσιμο"></td></tr></table></td></tr></table><div style="overflow:auto; height:80px; width:228px; overflow-x: hidden;">';
+	return staticRow;
+}
+
+function fillChecks(compNum, compName, compAFM)
+{
+	var duplicRow = '<table width="228" border="0" cellpadding="0" cellspacing="0" class="texttosmall" bgcolor="#edf5fb"><tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="firstChild.firstChild.click(); event.cancelBubble=true;"> <td width="10"><input companyID="'+compNum+'" companyTitle="'+compName+'" name="checklist" type="checkbox" class="texttosmall" onClick="checkChoise(this);"></td><td><div style="overflow:hidden; width:215px; white-space:nowrap; text-overflow:ellipsis">'+compNum+' '+compName+' '+compAFM+'</div></td> </tr></table>';
+	return duplicRow;
+}
+
+function fillDate()
+{
+	document.getElementById('dateRangeValue').innerText = 'Τρέχον έτος (01/01/' + logd.toString("yyyy") + ' - 31/12/' + 
+		logd.toString("yyyy") + ')';
+	document.getElementById('dd_1').title = document.getElementById('dateRangeValue').innerText;
+}
+
+function validDate(dateObj)
+{
+	var success = false;
+	var datePassed = dateObj.value
+	if (datePassed == "") { return; }
+	
+	if (document.getElementById('date1').value != "" && document.getElementById('date2').value != "")
+	{
+		document.getElementById('imgDateVal').src = "images/checktypedate.jpg"
+		document.getElementById('imgDateVal').disabled = false;
+	}
+	
+	if (isNaN(datePassed))
+	{
+		datePassed = datePassed.replace(/[\s-_:,*.|;]/g, "/");
+	}
+	else if (datePassed.length == 6 || datePassed.length == 8)
+	{
+		var fPart = datePassed.substring(0,2);
+		var sPart = datePassed.substring(2,4);
+		var lPart = datePassed.substring(4);		
+		datePassed = fPart+"/"+sPart+"/"+lPart;
+	}
+	var arrDateParts = datePassed.split("/");
+	if (arrDateParts.length != 3)
+	{		
+		errFunc(1,dateObj); //Lanthasmenh hmeromhnia
+		return;
+	}
+
+	if (arrDateParts[0] =="" || arrDateParts[1] =="" || (arrDateParts[2]) =="")
+	{
+		errFunc(2,dateObj);
+		return;
+	}
+	if (arrDateParts[0].length ==1)
+	{
+		arrDateParts[0] = "0"+arrDateParts[0];
+	}
+	if (arrDateParts[1].length ==1)
+	{
+		arrDateParts[1] = "0"+arrDateParts[1];
+	}
+	if (arrDateParts[2].length == 2)
+	{
+		arrDateParts[2] = (parseInt(arrDateParts[2],10) >= 58?"19":"20")+arrDateParts[2];
+	}
+	
+	if (isNaN(arrDateParts.join("")))
+	{
+		errFunc(2,dateObj); //Mh apodektoi xarakthres...elekste ksana
+		return;
+	}
+	try 
+	{		
+		Date.validateDay ( parseInt(arrDateParts[0],10), parseInt(arrDateParts[2],10), parseInt(arrDateParts[1],10)-1 );
+		Date.validateMonth (parseInt(arrDateParts[1],10)-1 );
+		Date.validateYear (parseInt(arrDateParts[2],10) );		
+	}
+	catch (exc) 
+	{
+		errFunc(3,dateObj); //Akurh Hmeromhnia h ektos epitrepton orion
+		return;
+	}	
+	var fullDate = arrDateParts.join("/");
+	dateObj.value = fullDate;
+	success = true;
+	return success;
+}
+
+function errFunc(errType,vDateObj)
+{
+	vDateObj.value = "";
+	document.body.focus();	
+	vDateObj.focus();
+	var strInnerHTML="";
+	document.getElementById('errorMsg').errorSource = vDateObj;
+	switch (errType) 
+	{
+		case 1: strInnerHTML = "Λανθασμένη ημερομηνία"; break;
+		case 2: strInnerHTML = "Μη αποδεκτοί χαρακτήρες στην ημερομηνία"; break;
+		case 3: strInnerHTML = "Άκυρη ημερομηνία ή εκτός επιτρεπτών ορίων"; break;
+	}
+	document.getElementById('errorMsgSpan').innerHTML = strInnerHTML;
+	document.getElementById('errorMsg').style.display = 'block';
+	document.getElementById('errorMsg').focus();
+	document.getElementById('imgDateVal').src = "images/checktypedateDis.jpg"
+	document.getElementById('imgDateVal').disabled = true;
+}
+
+function getPos(obj)
+{
+var objLeft = 0;var objTop=0
+while(obj!= null) 
+{
+objLeft += obj.offsetLeft;
+objTop += obj.offsetTop;
+obj = obj.offsetParent;
+}
+return [objLeft,objTop];
+}
+
+function okButSwap(imgObjState)
+{
+	document.getElementById('okbutt').src = 'images/ok_'+imgObjState+'.jpg';
+}
+
+function okButClick()
+{
+	if (document.getElementById('dd_1_choise').style.display == 'block')
+	{	
+	document.getElementById('errorMsg').errorSource.focus();
+	}
+	document.getElementById('errorMsg').style.display = 'none';
+}
+
+function ektelesiButSwap(imgObjState)
+{
+	document.getElementById('ektelesiButt').src = 'images/ektelesi_'+imgObjState+'.jpg';
+}
+
+function showHideAs(actObj) 
+{
+	if (actObj)
+	{
+		var divName = actObj.id.replace('action','actionPopup');
+		var actChoise = document.getElementById(divName);
+	}
+	for (var i=1, j=2; i<=j; i++)
+		{	
+			var tempObj = document.getElementById('actionPopup_'+i);
+			if (tempObj.style.display == 'block')
+			{				
+				tempObj.style.display = 'none';
+				if (tempObj==actChoise)
+				{
+					return;
+				}
+			break;
+			}
+		}
+		
+	if (!actObj)
+	{
+		return;
+	}
+	var newLeft=getPos(actObj)[0];
+	var newTop=getPos(actObj)[1];
+	var qCurStatus = actChoise.style.display;
+	actChoise.style.left = newLeft;	
+	actChoise.style.top = newTop + parseInt(actObj.offsetHeight);
+	actChoise.style.display = (qCurStatus=='none'?'block':'none');
+	showHideQs();
+}
+
+function homePage()
+{
+	tempObj = document.getElementById('sunopBut');
+	if (document.getElementById('sunopBut').className != 'titles')
+	{
+		if (!slideProg)
+		{
+			showSunop(tempObj);
+		}
+	}
+		aStr1 = new String(document.getElementById('img_panel1').src);
+		if (aStr1.indexOf('images/down_arrow.jpg')>-1)
+		{
+			Slide('panel1').doASlide();
+		}
+		aStr2 = new String(document.getElementById('img_panel2').src);
+		if (aStr2.indexOf('images/down_arrow.jpg')>-1)
+		{
+			Slide('panel2').doASlide();
+		}
+		aStr3 = new String(document.getElementById('img_panel3').src);
+		if (aStr3.indexOf('images/down_arrow.jpg')>-1)
+		{
+			Slide('panel3').doASlide();
+		}
+	panel2DataAct2();
+}
+
+</script>
+</head>
+<!-- setTimeout('start()',3000); -->
+<body onLoad="setTimeout('start()',1000);" onClick="showHideQs(); showHideAs();" onselectstart="return false">
+
+<div id="printContent" style="padding-top:0px; padding-left:0px; border:solid 1px #6d90b0; width:900px; height:500px; filter: progid:DXImageTransform.Microsoft.BasicImage(Rotation=1);">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="printTable">
+<tr><td colspan="2" style="padding-left:2px"><span class="titles">Αναλυτική Εικόνα Εταιρείας</span></td></tr>
+      <tr>
+        <td width="2" ></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="5">&nbsp;</td>
+            <td height="500">
+            
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttoread">
+  <tr>
+    <td width="5"></td>
+    <td height="5"></td>
+    <td width="5"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>&nbsp;</td>
+    <td width="100%"><span class="innertitles">Έσοδα</span></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Μεικτό κέρδος</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable1_1_1"></td>
+  </tr>
+  <tr>
+    <td>- Πωλήσεις</td>
+    <td></td>
+    <td align="right" id="printInnerTable1_1_2"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος πωληθέντων</td>
+    <td></td>
+    <td align="right" id="printInnerTable1_1_3"></td>
+  </tr>
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Παροχή υπηρεσιών</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable1_2_1"></td>
+  </tr>
+  <tr>
+    <td>Λοιπά έσοδα</td>
+    <td></td>
+    <td align="right" id="printInnerTable1_2_2"></td>
+  </tr>
+  <tr>
+    <td>Κέρδη από πωλήσεις παγιών</td>
+    <td></td>
+    <td align="right" id="printInnerTable1_2_3"></td>
+  </tr>
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Εσόδων</b></td>
+    <td></td>
+    <td align="right" id="printInnerTable1_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table>
+</td>
+    <td></td>
+  </tr>
+</table><hr>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>&nbsp;</td>
+    <td width="100%"><span class="innertitles">Έξοδα/Δαπάνες</span></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Αγορές</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable2_1_1"></td>
+  </tr>
+  <tr>
+    <td>Λήψη υπηρεσιών</td>
+    <td></td>
+    <td align="right" id="printInnerTable2_1_2"></td>
+  </tr>  
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="top" width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Δαπάνες πλην μισθοδοσίας</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable2_2_1"></td>
+  </tr>
+  <tr>
+    <td>Δαπάνες μισθοδοσίας</td>
+    <td></td>
+    <td align="right" id="printInnerTable2_2_2"></td>
+  </tr>
+  <tr>
+    <td>Αποσβέσεις παγίων</td>
+    <td></td>
+    <td align="right" id="printInnerTable2_2_3"></td>
+  </tr>
+  <tr>
+    <td>Ζημιές από πώληση παγιών</td>
+    <td></td>
+    <td align="right" id="printInnerTable2_2_4"></td>
+  </tr>
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Εξόδων/Δαπανών</b></td>
+    <td></td>
+    <td valign="bottom" align="right" id="printInnerTable2_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table><hr>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>&nbsp;</td>
+    <td width="100%"><span class="innertitles">Απαιτήσεις</span></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Υπόλοιπα πελατών</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable3_1_1"></td>
+  </tr>
+  <tr>
+    <td>Υπόλοιπα χρεωστών</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_1_2"></td>
+  </tr> 
+  <tr>
+    <td colspan="3" height="10" valign="middle"><img src="images/hr.jpg" width="100%" height="2"></td>    
+  </tr> 
+  <tr>
+    <td><b>Διαθέσιμα</b></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td>- Ταμείο</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_1_3"></td>
+  </tr>  
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="70"></td>
+    <td valign="top" width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall"> 
+  <tr>
+    <td>- Πιστωτικές κάρτες</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_2_1"></td>
+  </tr> 
+  <tr>
+    <td>- Λογ/σμοί καταθ. προθεσμίας</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_2_2"></td>
+  </tr>
+  <tr>
+    <td>- Αξιόγραφα εισπρακτέα</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_2_3"></td>
+  </tr>
+  <tr>
+    <td>- Λογ/σμοί εγγυήσεων επιταγ.</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_2_4"></td>
+  </tr>
+  <tr>
+    <td>- Λογαριασμοί όψεως</td>
+    <td></td>
+    <td align="right" id="printInnerTable3_2_5"></td>
+  </tr>
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="70"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Απαιτήσεων</b></td>
+    <td></td>
+    <td align="right" id="printInnerTable3_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table><hr>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>&nbsp;</td>
+    <td width="100%"><span class="innertitles">Υποχρεώσεις</span></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Υπόλοιπα προμηθευτών</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable4_1_1"></td>
+  </tr>
+  <tr>
+    <td>Υπόλοιπα πιστωτών</td>
+    <td></td>
+    <td align="right" id="printInnerTable4_1_2"></td>
+  </tr>     
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td valign="top" width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall"> 
+  <tr>
+    <td>Αξιόγραφα πληρωτέα</td>
+    <td></td>
+    <td align="right" id="printInnerTable4_2_1"></td>
+  </tr> 
+  <tr>
+    <td>Λογ/σμοί μεσοπρ. δανείων</td>
+    <td></td>
+    <td align="right" id="printInnerTable4_2_2"></td>
+  </tr>
+  <tr>
+    <td>Λογ/σμοί μακροπρ. δανείων</td>
+    <td></td>
+    <td align="right" id="printInnerTable4_2_3"></td>
+  </tr>  
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Υποχρεώσεων</b></td>
+    <td></td>
+    <td align="right" id="printInnerTable4_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table><hr>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>&nbsp;</td>
+    <td width="100%"><span class="innertitles">Λοιπά - Διάφορα</span></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="1%"></td>
+    <td valign="top" align="left" width="25%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Αρχικό απόθεμα</td>
+    <td width="3"></td>
+    <td align="right" id="printInnerTable5_1_1"></td>
+  </tr>
+  <tr>
+    <td>Κόστος υπολοίπου</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_1_2"></td>
+  </tr>     
+</table>
+</td>
+    <td align="center" width="1%" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall"> 
+  <tr>
+    <td>Κοστ/μένες εισαγωγές</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_2_1"></td>
+  </tr> 
+  <tr>
+    <td>Κοστ/μένες εξαγωγές</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_2_2"></td>
+  </tr>
+  <tr>
+    <td>Αγορές προς κοστολόγηση</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_2_3"></td>
+  </tr> 
+  <tr>
+    <td>Πωλήσεις προς κοστολόγηση</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_2_4"></td>
+  </tr> 
+</table></td>
+    <td align="center" width="1%" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><b>Παραγωγή</b></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος Α`/βοηθητ. υλών</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_3_1"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος εργατικών παραγ.</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_3_2"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος βιομηχαν. εξόδων</td>
+    <td></td>
+    <td align="right" id="printInnerTable5_3_3"></td>
+  </tr>
+</table></td>
+    <td width="1%"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="5"></td>
+    <td height="5" align="right">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+    	<td> 
+    	<hr>
+        </td>
+    </tr>
+    <tr>
+    	<td align="right" valign="bottom"> 
+    	<span class="lastline">Απαιτήσεις - Υποχρεώσεις</span>&nbsp;&nbsp;<span class="lastline" id="printLastAmount"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </td>        
+    </tr>
+    </table>
+    </td>
+    <td width="5"></td>
+  </tr>
+</table>            
+            </td>
+            <td width="5">&nbsp;</td>
+          </tr>
+        </table></td>
+        <td width="4" ></td>
+      </tr>      
+</table></div>
+
+<div id="errorMsg" style="display:none; z-index:1450; padding-top:0px; padding-left:0px; position:absolute; width:100%; height:100%; text-align:center; vertical-align:middle;" onClick="event.cancelBubble=true;" onKeyPress="if (event.keyCode==13){okButClick();}">
+<table width="100%" height="100%" align="center" border="0" cellpadding="0" cellspacing="0" style="vertical-align:middle; text-align:center">
+<tr><td><div style="height:176px; width:424px; background-image:url(images/errorpopupback.jpg); background-repeat:no-repeat; filter: progid:DXImageTransform.Microsoft.Shadow(color=silver,direction=120,strength=5);">
+<table width="424px" height="176px" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="20px" style="padding-left:8px; padding-top:7px"><span class="errorboxtitle"><b>Σφάλμα</b></span></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle"><span class="errorboxtext" id="errorMsgSpan"></span></td>
+  </tr>
+  <tr>
+    <td height="29px" align="right" style="padding-bottom:8px; padding-right:8px"><img style="cursor:hand" id="okbutt" src="images/ok_norm.jpg" onMouseOver="okButSwap('over');" onMouseOut="okButSwap('norm');" onMouseDown="okButSwap('down');" onMouseUp="okButSwap('over');" onClick="okButClick();"></td>
+  </tr>
+</table>
+</div></td></tr></table></div>
+
+<div id="actionPopup_1" style="display:none; border:dotted 1px #6d90b0; background-color:#edf5fb; z-index:1403; width:70px; position:absolute">
+    <table width="70px" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="homePage();">
+        <td height="17"><span class="actions">Αρχική</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="">
+        <td height="17"><span class="actions">link1</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="">
+        <td height="17"><span class="actions">entolh2</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="">
+        <td height="17"><span class="actions">link2</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="print();">
+        <td height="17"><span class="actions">Εκτύπωση</span></td>
+      </tr>
+    </table>
+    </div>
+    
+<div id="actionPopup_2" style="display:none; border:dotted 1px #6d90b0; background-color:#edf5fb; z-index:1403; width:90px; position:absolute">
+    <table width="90px" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="panel2DataAct2();">
+        <td height="17"><span class="actions">Αρχική</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="document.getElementById('but1').click(); showClosedPanel2();">
+        <td height="17"><span class="actions">Έσοδα</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="document.getElementById('but2').click(); showClosedPanel2();">
+        <td height="17"><span class="actions">Έξοδα</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="document.getElementById('but3').click(); showClosedPanel2();">
+        <td height="17"><span class="actions">Απαιτήσεις</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="document.getElementById('but4').click(); showClosedPanel2();">
+        <td height="17"><span class="actions">Υποχρεώσεις</span></td>
+      </tr>
+      <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="document.getElementById('but5').click(); showClosedPanel2();">
+        <td height="17"><span class="actions">Λοιπά-Διάφορα</span></td>
+      </tr>
+    </table>
+    </div>
+
+<div id="loader" style="padding-top:0px; padding-left:0px;"><script type="text/javascript">
+AC_FL_RunContent( 'codebase','http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0','width','100%','height','100%','id','Untitled-1','align','middle','src','images/loader','menu','false','quality','high','wmode','transparent','bgcolor','#FFFFFF','name','images/loader','scale','showall','allowscriptaccess','sameDomain','allowfullscreen','false','pluginspage','http://www.macromedia.com/go/getflashplayer','movie','images/loader' ); //end AC code
+</script><noscript><object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100%" height="100%" id="images/loader" align="middle"> <param name="allowScriptAccess" value="sameDomain" /><param name="allowFullScreen" value="false" />	<param name="movie" value="images/loader.swf" /><param name="menu" value="false" /><param name="quality" value="high" /><param name="bgcolor" value="#FFFFFF" /> <param name="wmode" value="transparent">	<param name="scale" value="showall"  /> <embed src="images/loader.swf" menu="false" quality="high" wmode="transparent" bgcolor="#FFFFFF" width="100%" height="100%" name="images/loader" align="middle" scale="showall" allowScriptAccess="sameDomain" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />	</object></noscript></div>
+
+<div style="padding-top:0px; padding-left:0px"> 
+<img id="background1" src="images/toptemp.jpg" alt="" title=""> 
+</div>
+<div style="padding-top:31px"> 
+<img id="background" src="images/back.jpg" alt="" title=""> 
+</div>
+
+<div id="dd_1_choise" class="texttosmall" style="display:none; border:solid 1px #6d90b0; background-color:#edf5fb; width:170px; position:absolute; top:28px; left:89px; padding-top:2px; z-index:1400">
+<table width="168" border="0" cellpadding="0" cellspacing="0" class="texttosmall" bgcolor="#edf5fb">
+    <tr class="optionNoSel" style="cursor:default" onClick="event.cancelBubble=true"><td style="padding-left:4px; vertical-align:middle"><input style="width:80px; height:17px" class="texttosmall" id="date1" name="date1" maxlength="10" type="text" onBlur="validDate(this);" onKeyPress="if (event.keyCode==13){date2.focus();}"> - <input style="width:80px; height:17px" class="texttosmall" id="date2" name="date2" maxlength="10" type="text" onBlur="validDate(this);" onKeyPress="if (event.keyCode==13){ if (validDate(this)) imgDateVal.click();}"> <img style="vertical-align:bottom; cursor:hand;" id="imgDateVal" name="imgDateVal" src="images/checktypedateDis.jpg" disabled alt="Έλεγχος/Επικύρωση" onClick="optionSelectDate(this,0); showHideQs();"></td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,1);"><td style="padding-left:4px">Σήμερα</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,2);"><td style="padding-left:4px">Εχθές</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,3);"><td style="padding-left:4px">Τρέχουσα εβδομάδα</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,4);"><td style="padding-left:4px">Προηγούμενη εβδομάδα</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,5);"><td style="padding-left:4px">Τρέχων μήνας</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,6);"><td style="padding-left:4px">Προηγούμενος μήνας</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,7);"><td style="padding-left:4px">Τρέχον έτος</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,8);"><td style="padding-left:4px"><div style="padding-right:4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis">Τρέχον έτος (μέχρι προηγούμενο μήνα)</div></td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelectDate(this,9);"><td style="padding-left:4px">Προηγούμενο έτος</td></tr>
+</table>
+</div>
+
+<div id="dd_2_choise" class="texttosmall" style="display:none; border:solid 1px #6d90b0; background-color:#edf5fb; width:230px; position:absolute; top:28px; left:321px; z-index:1401"></div>
+
+<div id="dd_3_choise" class="texttosmall" style="display:none; border:solid 1px #6d90b0; background-color:#edf5fb; width:170px; position:absolute; top:28px; left:569px; z-index:1402">
+<table width="168" border="0" cellpadding="0" cellspacing="0" class="texttosmall" bgcolor="#edf5fb">
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Πρότυπο κόστος</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Ετήσια μέση σταθμική τιμή</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Μηνιαία μέση τιμή</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Τριμηνιαία μέση τιμή</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Τελευταία τιμή αγοράς</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Κυλιόμενη μέση τιμή</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Μέση τιμή FIFO</td></tr>
+    <tr class="optionNoSel" onMouseOver="optionHighlight(this,true);" onMouseOut="optionHighlight(this,false);" onClick="optionSelect(this,3);"><td style="padding-left:4px">Μέση τιμή LIFO</td></tr>
+</table>
+</div>
+
+<div id="container">
+
+<div id="fixed" style="width:100%; top:0; left:0; border:none">
+
+  <table width="100%" height="5%" border="0" cellpadding="0" cellspacing="0" class="texttoread">  
+  <tr>
+    <td width="17" height="2"></td>
+    <td width="100%" valign="top">
+    <div id="searchForm" class="texttoread">
+    <table width="100%" height="18" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+    <tr>
+    <td width="80"><span class="texttosmall"><b>Ημερομηνίες:</b></span></td>
+    <td width="180">
+    <table width="170" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+    <tr>
+    <td>
+    <div id="dd_1" onClick="showHideQs(this); event.cancelBubble=true" class="texttosmall" style="border:solid 1px #6d90b0; background-color:#edf5fb; width:155px; height:18px; padding-left:2px; padding-top:2px; cursor:default; overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title=""><span id="dateRangeValue"></span></div></td>
+    <td width="15" align="left"><img onClick="document.getElementById('dd_1').click(); event.cancelBubble=true" src="images/downarrow.jpg"></td>
+    </tr>
+    </table>
+    </td>
+    <td width="52"><span class="texttosmall"><b>Εταιρίες:</b></span></td>
+    <td width="180"><table width="170" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+    <tr>
+    <td>
+    <div id="dd_2" onClick="showHideQs(this); event.cancelBubble=true" class="texttosmall" style="border:solid 1px #6d90b0; background-color:#edf5fb; width:155px; height:18px; padding-left:2px; padding-top:2px; cursor:default; overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title=""><span id="etairiaValue"></span></div></td>
+    <td width="15" align="left"><img onClick="document.getElementById('dd_2').click(); event.cancelBubble=true" src="images/downarrow.jpg"></td>
+    </tr>
+    </table></td>
+    <td width="68"><span class="texttosmall"><b>Αποτίμηση:</b></span></td>
+    <td width="180"><table width="170" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+    <tr>
+    <td>
+    <div id="dd_3" onClick="showHideQs(this); event.cancelBubble=true" class="texttosmall" style="border:solid 1px #6d90b0; background-color:#edf5fb; width:155px; height:18px; padding-left:2px; padding-top:2px; cursor:default; overflow:hidden; white-space:nowrap; text-overflow:ellipsis"><span id="apotimisiValue">Μηνιαία μέση τιμή</span></div>    
+    </td>
+    <td width="15" align="left"><img onClick="document.getElementById('dd_3').click(); event.cancelBubble=true" src="images/downarrow.jpg"></td>
+    </tr>
+    </table></td>
+    <td align="right"><img style="cursor:hand" id="ektelesiButt" src="images/ektelesi_norm.jpg" onMouseOver="ektelesiButSwap('over');" onMouseOut="ektelesiButSwap('norm');" onMouseDown="ektelesiButSwap('down');" onMouseUp="ektelesiButSwap('over');" onClick="homePage(); loader(true); setTimeout('GetData()',1000);"></td>
+    </tr></table>     
+    </div>
+    <div id="errordiv"></div>&nbsp;&nbsp;<div id="debug"></div></td>
+    <td width="17" height="2"></td>
+  </tr> 
+</table>
+
+</div>
+
+<div id="scrolls">
+<div id="scroller">
+<div id="body">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="10" height="10"></td>
+    <td height="10"></td>
+    <td height="10"></td>
+  </tr>
+  <tr>
+    <td width="10"></td>
+    <td>
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5">&nbsp;</td>
+    <td>
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0"> <!--780-->
+        <tr> 
+  <td colspan="3">
+  	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr><td>
+  	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="128" height="15" align="right"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/paneltopleft.png')">&nbsp;</DIV></td>
+    <td width="100%" background="images/paneltoptile.jpg"></td>
+    <td width="118" align="right" background="images/paneltopright.jpg"><div><img style="cursor:pointer;" onClick="Slide('panel1').doASlide();" src="images/up_arrow.jpg" alt="Εμφάνιση / Απόκρυψη" border="0" id="img_panel1"></div></td>
+    <td width="10" height="15" align="right"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/paneltoprightedge.png')">&nbsp;</DIV></td>
+  </tr></table></td></tr>
+  <tr><td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="2" background="images/panellefttile.jpg"></td>
+    <td bgcolor="f6f6f4" style="padding-left:6px">
+    <span class="titles" style="cursor:hand" onClick="if (!slideProg){showSunop(this)}" id="sunopBut">Συνοπτική Εικόνα</span> 
+    <span class="titles">/</span> 
+    <span class="titlesselected" style="cursor:hand" onClick="if (!slideProg){showAnal(this)}" id="analBut">Αναλυτική Εικόνα</span><span class="cointext">&nbsp;(Νόμισμα:&nbsp;</span><span class="cointext" id="coin"><b>€</b></span><span class="cointext">)</span></td>
+    <td class="actions" align="right" bgcolor="f6f6f4" style="padding-right:10px"><div id="action_1" style="cursor:hand; width:70px" onClick="showHideAs(this); event.cancelBubble=true;">Ενέργειες<img src="images/actionsarrow.jpg"></div></td>
+    <td width="4" background="images/panelrighttile.gif"></td>
+  </tr>
+</table>
+</td></tr></table>
+
+<div id="sunoptiki">
+  <div id="panel1" style="display:inherit; overflow:hidden; height:155px; color:#000000;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="2" background="images/panellefttile.jpg" ></td>
+        <td bgcolor="f6f6f4"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="5">&nbsp;</td>
+            <td>
+            <br>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr id="buttons">
+    <td align="center"><span class="texttoread" style="cursor:hand" onClick="selectedLink(this); showClosedPanel2();" id="but1">Έσοδα</span></td>
+    <td align="center"><span class="texttoread" style="cursor:hand" onClick="selectedLink(this); showClosedPanel2();" id="but2">Έξοδα</span></td>
+    <td align="center"><span class="texttoread" style="cursor:hand" onClick="selectedLink(this); showClosedPanel2();" id="but3">Απαιτήσεις</span></td>
+    <td align="center"><span class="texttoread" style="cursor:hand" onClick="selectedLink(this); showClosedPanel2();" id="but4">Υποχρεώσεις</span></td>
+    <td align="center"><span class="texttoread" style="cursor:hand" onClick="selectedLink(this); showClosedPanel2();" id="but5">Λοιπά-Διάφορα</span></td>
+    <td>&nbsp;</td>
+    <td rowspan="3" align="right" valign="top" style="background-image:url(images/topart.jpg); background-position:bottom; background-position:right; background-repeat:no-repeat"><table width="100px" border="0" cellpadding="0" cellspacing="0" class="texttoread">
+      <tr>
+        <td></td>
+      </tr>      
+    </table></td>
+    <td width="10" rowspan="3">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="110" height="90" align="center"><div id="topicon1"><img src="images/esodadis.jpg" width="80" height="80"></div></td>
+    <td width="110" align="center"><div id="topicon2"><img src="images/eksodadis.jpg" width="80" height="80"></div></td>
+    <td width="110" align="center"><div id="topicon3"><img src="images/apaithseisdis.jpg" width="80" height="80"></div></td>
+    <td width="110" align="center"><div id="topicon4"><img src="images/upoxreoseisdis.jpg" width="80" height="80"></div></td>
+    <td width="110" align="center"><div id="topicon5"><img src="images/loipadis.jpg" width="80" height="80"></div></td>
+    <td width="20">&nbsp;</td>
+    </tr>
+  <tr>
+    <td height="30" align="center"><div class="amount" id="esoda"></div></td>
+    <td align="center"><div class="amount" id="eksoda"></div></td>
+    <td align="center"><div class="amount" id="apaithseis"></div></td>
+    <td align="center"><div class="amount" id="upoxreoseis"></div></td>
+    <td align="center"><div class="amount" id="loipa"></div></td>
+    <td>&nbsp;</td>
+    </tr>
+</table>           
+              </td>
+            <td width="5">&nbsp;</td>
+          </tr>
+        </table></td>
+        <td width="4" background="images/panelrighttile.gif" ></td>
+      </tr>      
+    </table></div></div>
+    
+<div id="analitiki">
+<div id="panel4" style="display:none; overflow:hidden; height:500px; color:#000000;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="2" background="images/panellefttile.jpg" ></td>
+        <td bgcolor="f6f6f4"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="5">&nbsp;</td>
+            <td height="500" bgcolor="f6f6f4">
+            
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttoread">
+  <tr>
+    <td width="5"></td>
+    <td height="5"></td>
+    <td width="5"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><img src="images/innertabletopleft.jpg"></td>
+    <td background="images/innertabletoptile.jpg" width="100%"><span class="innertitles">Έσοδα</span></td>
+    <td><img src="images/innertabletopright.jpg"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Μεικτό κέρδος</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable1_1_1"></td>
+  </tr>
+  <tr>
+    <td>- Πωλήσεις</td>
+    <td></td>
+    <td align="right" id="innerTable1_1_2"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος πωληθέντων</td>
+    <td></td>
+    <td align="right" id="innerTable1_1_3"></td>
+  </tr>
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Παροχή υπηρεσιών</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable1_2_1"></td>
+  </tr>
+  <tr>
+    <td>Λοιπά έσοδα</td>
+    <td></td>
+    <td align="right" id="innerTable1_2_2"></td>
+  </tr>
+  <tr>
+    <td>Κέρδη από πωλήσεις παγιών</td>
+    <td></td>
+    <td align="right" id="innerTable1_2_3"></td>
+  </tr>
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Εσόδων</b></td>
+    <td></td>
+    <td align="right" id="innerTable1_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table>
+</td>
+    <td></td>
+  </tr>
+</table><br>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><img src="images/innertabletopleft.jpg"></td>
+    <td background="images/innertabletoptile.jpg" width="100%"><span class="innertitles">Έξοδα/Δαπάνες</span></td>
+    <td><img src="images/innertabletopright.jpg"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Αγορές</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable2_1_1"></td>
+  </tr>
+  <tr>
+    <td>Λήψη υπηρεσιών</td>
+    <td></td>
+    <td align="right" id="innerTable2_1_2"></td>
+  </tr>  
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="top" width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Δαπάνες πλην μισθοδοσίας</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable2_2_1"></td>
+  </tr>
+  <tr>
+    <td>Δαπάνες μισθοδοσίας</td>
+    <td></td>
+    <td align="right" id="innerTable2_2_2"></td>
+  </tr>
+  <tr>
+    <td>Αποσβέσεις παγίων</td>
+    <td></td>
+    <td align="right" id="innerTable2_2_3"></td>
+  </tr>
+  <tr>
+    <td>Ζημιές από πώληση παγιών</td>
+    <td></td>
+    <td align="right" id="innerTable2_2_4"></td>
+  </tr>
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Εξόδων/Δαπανών</b></td>
+    <td></td>
+    <td valign="bottom" align="right" id="innerTable2_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table><br>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><img src="images/innertabletopleft.jpg"></td>
+    <td background="images/innertabletoptile.jpg" width="100%"><span class="innertitles">Απαιτήσεις</span></td>
+    <td><img src="images/innertabletopright.jpg"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Υπόλοιπα πελατών</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable3_1_1"></td>
+  </tr>
+  <tr>
+    <td>Υπόλοιπα χρεωστών</td>
+    <td></td>
+    <td align="right" id="innerTable3_1_2"></td>
+  </tr> 
+  <tr>
+    <td colspan="3" height="10" valign="middle"><img src="images/hr.jpg" width="100%" height="2"></td>    
+  </tr> 
+  <tr>
+    <td><b>Διαθέσιμα</b></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td>- Ταμείο</td>
+    <td></td>
+    <td align="right" id="innerTable3_1_3"></td>
+  </tr>  
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="70"></td>
+    <td valign="top" width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall"> 
+  <tr>
+    <td>- Πιστωτικές κάρτες</td>
+    <td></td>
+    <td align="right" id="innerTable3_2_1"></td>
+  </tr> 
+  <tr>
+    <td>- Λογ/σμοί καταθ. προθεσμίας</td>
+    <td></td>
+    <td align="right" id="innerTable3_2_2"></td>
+  </tr>
+  <tr>
+    <td>- Αξιόγραφα εισπρακτέα</td>
+    <td></td>
+    <td align="right" id="innerTable3_2_3"></td>
+  </tr>
+  <tr>
+    <td>- Λογ/σμοί εγγυήσεων επιταγ.</td>
+    <td></td>
+    <td align="right" id="innerTable3_2_4"></td>
+  </tr>
+  <tr>
+    <td>- Λογαριασμοί όψεως</td>
+    <td></td>
+    <td align="right" id="innerTable3_2_5"></td>
+  </tr>
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="70"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Απαιτήσεων</b></td>
+    <td></td>
+    <td align="right" id="innerTable3_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table><br>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><img src="images/innertabletopleft.jpg"></td>
+    <td background="images/innertabletoptile.jpg" width="100%"><span class="innertitles">Υποχρεώσεις</span></td>
+    <td><img src="images/innertabletopright.jpg"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="2"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Υπόλοιπα προμηθευτών</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable4_1_1"></td>
+  </tr>
+  <tr>
+    <td>Υπόλοιπα πιστωτών</td>
+    <td></td>
+    <td align="right" id="innerTable4_1_2"></td>
+  </tr>     
+</table>
+</td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td valign="top" width="35%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall"> 
+  <tr>
+    <td>Αξιόγραφα πληρωτέα</td>
+    <td></td>
+    <td align="right" id="innerTable4_2_1"></td>
+  </tr> 
+  <tr>
+    <td>Λογ/σμοί μεσοπρ. δανείων</td>
+    <td></td>
+    <td align="right" id="innerTable4_2_2"></td>
+  </tr>
+  <tr>
+    <td>Λογ/σμοί μακροπρ. δανείων</td>
+    <td></td>
+    <td align="right" id="innerTable4_2_3"></td>
+  </tr>  
+</table></td>
+    <td align="center" valign="middle"><img src="images/vr.jpg" width="2" height="50"></td>
+    <td valign="bottom" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td><b>Σύνολο Υποχρεώσεων</b></td>
+    <td></td>
+    <td align="right" id="innerTable4_3_3"></td>
+  </tr>
+</table></td>
+    <td width="2"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table><br>
+</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><img src="images/innertabletopleft.jpg"></td>
+    <td background="images/innertabletoptile.jpg" width="100%"><span class="innertitles">Λοιπά - Διάφορα</span></td>
+    <td><img src="images/innertabletopright.jpg"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="texttosmall">
+  <tr>
+    <td width="1%"></td>
+    <td valign="top" align="left" width="25%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td>Αρχικό απόθεμα</td>
+    <td width="3"></td>
+    <td align="right" id="innerTable5_1_1"></td>
+  </tr>
+  <tr>
+    <td>Κόστος υπολοίπου</td>
+    <td></td>
+    <td align="right" id="innerTable5_1_2"></td>
+  </tr>     
+</table>
+</td>
+    <td align="center" width="1%" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall"> 
+  <tr>
+    <td>Κοστ/μένες εισαγωγές</td>
+    <td></td>
+    <td align="right" id="innerTable5_2_1"></td>
+  </tr> 
+  <tr>
+    <td>Κοστ/μένες εξαγωγές</td>
+    <td></td>
+    <td align="right" id="innerTable5_2_2"></td>
+  </tr>
+  <tr>
+    <td>Αγορές προς κοστολόγηση</td>
+    <td></td>
+    <td align="right" id="innerTable5_2_3"></td>
+  </tr> 
+  <tr>
+    <td>Πωλήσεις προς κοστολόγηση</td>
+    <td></td>
+    <td align="right" id="innerTable5_2_4"></td>
+  </tr> 
+</table></td>
+    <td align="center" width="1%" valign="middle"><img src="images/vr.jpg" width="2" height="65"></td>
+    <td valign="top" width="30%"><table width="100%" border="0" cellspacing="3" cellpadding="0" class="texttosmall">
+  <tr>
+    <td><b>Παραγωγή</b></td>
+    <td width="3"></td>
+    <td align="right"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος Α`/βοηθητ. υλών</td>
+    <td></td>
+    <td align="right" id="innerTable5_3_1"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος εργατικών παραγ.</td>
+    <td></td>
+    <td align="right" id="innerTable5_3_2"></td>
+  </tr>
+  <tr>
+    <td>- Κόστος βιομηχαν. εξόδων</td>
+    <td></td>
+    <td align="right" id="innerTable5_3_3"></td>
+  </tr>
+</table></td>
+    <td width="1%"></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+</table></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="5"></td>
+    <td height="5" align="right">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+    	<td> 
+    	<img src="images/hr.jpg" width="100%" height="2">
+        </td>
+    </tr>
+    <tr>
+    	<td align="right" valign="bottom"> 
+    	<span class="lastline">Απαιτήσεις - Υποχρεώσεις</span>&nbsp;&nbsp;<span class="lastline" id="lastAmount"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </td>        
+    </tr>
+    </table>
+    </td>
+    <td width="5"></td>
+  </tr>
+</table>
+
+            
+              </td>
+            <td width="5">&nbsp;</td>
+          </tr>
+        </table></td>
+        <td width="4" background="images/panelrighttile.gif" ></td>
+      </tr>      
+    </table></div></div>
+    
+    
+    
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="10" height="12"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/panelbottomleft.png')">&nbsp;</DIV></td>
+        <td width="100%" height="12" background="images/panelbottomtile.jpg"></td>
+        <td width="11" height="12" valign="top"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/panelbottomright.png')">&nbsp;</DIV></td>
+      </tr>
+    </table>
+  
+  </td>
+   </tr>
+</table></td>
+    <td width="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><table id="bottomInfo" width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="290" valign="top"><table width="290" border="0" cellspacing="0" cellpadding="0">
+  <td colspan="3">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr><td>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="128" height="15" align="right"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/paneltopleft.png')">&nbsp;</DIV></td>
+    <td width="100%" background="images/paneltoptile.jpg"></td>
+    <td width="118" align="right" background="images/paneltopright.jpg"><div><a style="cursor:pointer;" onClick="Slide('panel2').doASlide();"><img src="images/up_arrow.jpg" alt="Εμφάνιση / Απόκρυψη" border="0" id="img_panel2"></a></div></td>
+    <td width="10" height="15" align="right"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/paneltoprightedge.png')">&nbsp;</DIV></td>
+  </tr></table></td></tr>
+  <tr><td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="2" background="images/panellefttile.jpg"></td>
+    <td bgcolor="f6f6f4" style="padding-left:6px">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><span class="titles">Αναλυτικά</span></td>
+    <td align="right" style="padding-right:2px"><div class="actions" id="action_2" style="cursor:hand; width:70px" onClick="showHideAs(this); event.cancelBubble=true;">Ενέργειες<img src="images/actionsarrow.jpg"></div></td>
+  </tr>
+</table>
+    </td>
+    <td width="4" background="images/panelrighttile.gif"></td>
+  </tr>
+</table>
+</td></tr></table>
+  <div id="panel2" style="display:inherit; overflow:hidden; height:250px; color:#000000;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="2" background="images/panellefttile.jpg" ></td>
+        <td bgcolor="f6f6f4"><table width="100%" height="250px" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="5">&nbsp;</td>
+            <td valign="middle" style="padding-left:8px; padding-right:5px">            
+      <div id="panel2text" class="texttoread">
+      <table width="100%" class="texttoread">
+            <tr>
+            <td colspan="2" align="center"><b>Αποτέλεσμα Εταιρείας</b><br><br></td>
+            </tr>
+            <tr>
+            <td colspan="2" align="center" valign="center"><div id="mainicon"><img id="mainiconimg" src="images/totaldis.jpg"><br><br></div></td>
+            </tr>
+            <tr>
+            <td align="left">Απαιτήσεις - Υποχρεώσεις</td><td align="right"><div id="panel2amount" class="texttoread"></div></td>
+            </tr>
+        </table> 
+        </div>           
+            </td>
+            <td width="5">&nbsp;</td>
+          </tr>
+        </table></td>
+        <td width="4" background="images/panelrighttile.gif" ></td>
+      </tr>      
+    </table></div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="10" height="12"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/panelbottomleft.png')">&nbsp;</DIV></td>
+        <td width="100%" height="12" background="images/panelbottomtile.jpg"></td>
+        <td width="11" height="12" valign="top"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/panelbottomright.png')">&nbsp;</DIV></td>
+      </tr>
+    </table>
+  
+  </td>
+   
+</table>
+</td>
+        <td width="50">&nbsp;</td>
+        <td valign="top">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0"> <!--440-->
+        <tr>
+  <td colspan="3">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr><td>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="128" height="15" align="right"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/paneltopleft.png')">&nbsp;</DIV></td>
+    <td width="100%" background="images/paneltoptile.jpg"></td>
+    <td width="118" align="right" background="images/paneltopright.jpg"><div><a style="cursor:pointer;" onClick="Slide('panel3').doASlide();"><img src="images/up_arrow.jpg" alt="Εμφάνιση / Απόκρυψη" border="0" id="img_panel3"></a></div></td>
+    <td width="10" height="15" align="right"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/paneltoprightedge.png')">&nbsp;</DIV></td>
+  </tr></table></td></tr>
+  <tr><td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="2" background="images/panellefttile.jpg"></td>
+    <td bgcolor="f6f6f4" style="padding-left:6px"><span class="titles">Γράφημα</span></td>
+    <td width="4" background="images/panelrighttile.gif"></td>
+  </tr>
+</table>
+</td></tr></table>
+  <div id="panel3" style="display:inherit; overflow:hidden; height:250px; color:#000000;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="2" background="images/panellefttile.jpg"></td>
+        <td bgcolor="f6f6f4"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>            
+            <td height="250" valign="middle" align="center"><div id="panel3text" style="vertical-align:middle"><img src="images/graph.jpg" width="350" height="226"></div></td>            
+          </tr>
+        </table></td>
+        <td width="4" background="images/panelrighttile.gif"></td>
+      </tr>      
+    </table></div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="10" height="12"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/panelbottomleft.png')">&nbsp;</DIV></td>
+        <td width="100%" height="12" background="images/panelbottomtile.jpg"></td>
+        <td width="11" height="12" valign="top"><DIV STYLE="width:100%; filter: 
+                  progid:DXImageTransform.Microsoft.AlphaImageLoader (enabled = bEnabled, src='images/panelbottomright.png')">&nbsp;</DIV></td>
+      </tr>
+    </table>
+  
+  </td>
+   </tr>
+</table>
+</td>
+      </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  
+</table>
+</td>
+    <td width="10"></td>
+  </tr>
+  <tr>
+    <td width="10" height="5"></td>
+    <td height="5"></td>
+    <td width="10" height="5"></td>
+  </tr>
+</table>
+</div></div></div>
+</div>
+</body>
+</html>

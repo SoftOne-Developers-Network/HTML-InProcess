@@ -1,0 +1,11 @@
+html, body {margin:0; padding:0;}
+body {font-family:verdana, arial, sans-serif; font-size:76%; margin: 0 0 0 0; text-align:center; }
+#printContent { display:block; }
+/*.printTable { display:block; }*/
+#fixed { display:none; }
+#scrolls { display:none; }
+#background { display:none; }
+#background1 { display:none; }
+#scroller { display:none; }
+#loader { display:none; }
+#actionPopup_1 { display:none; }
